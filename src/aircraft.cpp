@@ -2,6 +2,7 @@
 
 #include "GL/opengl_interface.hpp"
 
+#include <algorithm>
 #include <cmath>
 
 void Aircraft::turn_to_waypoint()
@@ -105,7 +106,7 @@ bool Aircraft::move()
         // move in the direction of the current speed
         pos += speed;
 
-        // if we are close to our next waypoint, stike if off the list
+        // if we are close to our next waypoint, strike if off the list
         if (!waypoints.empty() && distance_to(waypoints.front()) < DISTANCE_THRESHOLD)
         {
             if (waypoints.front().is_at_terminal())
@@ -129,6 +130,23 @@ bool Aircraft::move()
         }
         else
         {
+            if (--fuel <= 0)
+            {
+                std::cout << flight_number << " has crashed" << std::endl;
+                return false;
+            }
+
+            if (!has_terminal())
+            {
+
+                auto ways = control.reserve_terminal(*this);
+                if (!ways.empty())
+                {
+                    waypoints.clear();
+                    std::move(ways.begin(), ways.end(), std::back_inserter(waypoints));
+                }
+            }
+
             // if we are in the air, but too slow, then we will sink!
             const float speed_len = speed.length();
             if (speed_len < SPEED_THRESHOLD)
@@ -142,6 +160,17 @@ bool Aircraft::move()
     }
 
     return true;
+}
+
+void Aircraft::refill(int& fuel_stock)
+{
+    if (is_at_terminal && fuel_stock > 0)
+    {
+        int need = 3000 - fuel > fuel_stock ? fuel_stock : 3000 - fuel;
+        fuel += need;
+        fuel_stock -= need;
+        std::cout << flight_number << " has been restocked with " << need << "L of fuel" << std::endl;
+    }
 }
 
 void Aircraft::display() const

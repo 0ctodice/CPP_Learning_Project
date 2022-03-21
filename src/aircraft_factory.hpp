@@ -16,6 +16,8 @@ private:
     std::vector<std::string> used_flight_numbers = {};
     std::array<AircraftType, 3> aircraft_types;
     std::unique_ptr<Aircraft> create_aircraft(Tower& tower);
+    const int min_fuel = 150;
+    const int max_fuel = 3000;
 
 public:
     AircraftFactory();

@@ -15,6 +15,7 @@ WaypointQueue Tower::get_circle() const
 
 WaypointQueue Tower::get_instructions(Aircraft& aircraft)
 {
+
     if (!aircraft.is_at_terminal)
     {
         // if the aircraft is far, then just guide it to the airport vicinity
@@ -56,6 +57,30 @@ WaypointQueue Tower::get_instructions(Aircraft& aircraft)
         {
             return {};
         }
+    }
+}
+
+WaypointQueue Tower::reserve_terminal(Aircraft& aircraft)
+{
+    if (aircraft.is_circling())
+    {
+        const auto vp = airport.reserve_terminal(aircraft);
+        if (!vp.first.empty())
+        {
+            reserved_terminals.emplace(&aircraft, vp.second);
+            return vp.first;
+        }
+    }
+    return {};
+}
+
+void Tower::unregister_on_crash(const Aircraft& aircraft)
+{
+    const auto it = reserved_terminals.find(&aircraft);
+    if (it != reserved_terminals.end())
+    {
+        airport.free_terminal(it->second);
+        reserved_terminals.erase(it);
     }
 }
 

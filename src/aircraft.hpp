@@ -7,6 +7,7 @@
 #include "tower.hpp"
 #include "waypoint.hpp"
 
+#include <random>
 #include <string>
 #include <string_view>
 
@@ -21,6 +22,7 @@ private:
     bool landing_gear_deployed = false; // is the landing gear deployed?
     bool is_at_terminal        = false;
     bool has_left              = false;
+    int fuel;
 
     // turn the aircraft to arrive at the next waypoint
     // try to facilitate reaching the waypoint after the next by facing the
@@ -47,22 +49,29 @@ private:
 
 public:
     Aircraft(const AircraftType& type_, const std::string_view& flight_number_, const Point3D& pos_,
-             const Point3D& speed_, Tower& control_) :
+             const Point3D& speed_, Tower& control_, int init_fuel) :
         GL::Displayable { pos_.x() + pos_.y() },
         type { type_ },
         flight_number { flight_number_ },
         pos { pos_ },
         speed { speed_ },
-        control { control_ }
+        control { control_ },
+        fuel { init_fuel }
     {
         speed.cap_length(max_speed());
     }
 
-    const std::string& get_flight_num() const { return flight_number; }
-    float distance_to(const Point3D& p) const { return pos.distance_to(p); }
+    ~Aircraft() { control.unregister_on_crash(*this); }
 
+    const std::string& get_flight_num() const { return flight_number; }
+    bool is_low_on_fuel() const { return fuel < 200; }
+    float distance_to(const Point3D& p) const { return pos.distance_to(p); }
+    bool has_terminal() const { return !waypoints.empty() && waypoints.back().is_at_terminal(); }
+    bool is_circling() const { return !waypoints.empty() && !waypoints.back().is_on_ground() && !has_left; }
+    void refill(int& fuel_stock);
     void display() const override;
     bool move() override;
 
     friend class Tower;
+    friend class AircraftManager;
 };

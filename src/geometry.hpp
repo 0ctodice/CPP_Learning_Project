@@ -65,7 +65,6 @@ struct Point2D
 
 struct Point3D
 {
-    // float values[3] {};
     std::array<float, 3> values = {};
 
     Point3D() {}

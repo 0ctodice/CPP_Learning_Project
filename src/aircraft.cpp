@@ -132,8 +132,8 @@ bool Aircraft::move()
         {
             if (--fuel <= 0)
             {
-                std::cout << flight_number << " has crashed" << std::endl;
-                return false;
+                using namespace std::string_literals;
+                throw AircraftCrash { flight_number + " has crashed for of lack of fuel"s };
             }
 
             if (!has_terminal())
@@ -164,6 +164,7 @@ bool Aircraft::move()
 
 void Aircraft::refill(int& fuel_stock)
 {
+    assert(fuel_stock >= 0);
     if (is_at_terminal && fuel_stock > 0)
     {
         int need = 3000 - fuel > fuel_stock ? fuel_stock : 3000 - fuel;

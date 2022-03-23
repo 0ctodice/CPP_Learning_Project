@@ -3,6 +3,7 @@
 #include "img/media_path.hpp"
 
 #include <stdexcept>
+#include <string>
 
 const MediaPath one_lane_airport_sprite_path = { "airport_1lane.png" };
 const MediaPath two_lane_airport_sprite_path = { "airport_2lane.png" };

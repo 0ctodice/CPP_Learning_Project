@@ -46,6 +46,9 @@ void TowerSimulation::create_keystrokes()
     GL::keystrokes.emplace('!', []() { GL::ticks_per_sec = std::max(GL::ticks_per_sec - 1u, 1u); });
     GL::keystrokes.emplace('f', []() { GL::toggle_fullscreen(); });
     GL::keystrokes.emplace('p', []() { GL::is_paused = !GL::is_paused; });
+    GL::keystrokes.emplace(
+        'm', [this]()
+        { std::cout << "total landing crashes : " << aircraft_manager->landing_crash_counter << std::endl; });
     GL::keystrokes.emplace('0', [this]() { print_existing_aircraft(0); });
     GL::keystrokes.emplace('1', [this]() { print_existing_aircraft(1); });
     GL::keystrokes.emplace('2', [this]() { print_existing_aircraft(2); });

@@ -49,14 +49,10 @@ void TowerSimulation::create_keystrokes()
     GL::keystrokes.emplace(
         'm', [this]()
         { std::cout << "total landing crashes : " << aircraft_manager->landing_crash_counter << std::endl; });
-    GL::keystrokes.emplace('0', [this]() { print_existing_aircraft(0); });
-    GL::keystrokes.emplace('1', [this]() { print_existing_aircraft(1); });
-    GL::keystrokes.emplace('2', [this]() { print_existing_aircraft(2); });
-    GL::keystrokes.emplace('3', [this]() { print_existing_aircraft(3); });
-    GL::keystrokes.emplace('4', [this]() { print_existing_aircraft(4); });
-    GL::keystrokes.emplace('5', [this]() { print_existing_aircraft(5); });
-    GL::keystrokes.emplace('6', [this]() { print_existing_aircraft(6); });
-    GL::keystrokes.emplace('7', [this]() { print_existing_aircraft(7); });
+    for (int i = 0; i < 8; i++)
+    {
+        GL::keystrokes.emplace(i + '0', [this, i]() { print_existing_aircraft(i); });
+    }
 }
 
 void TowerSimulation::display_help() const

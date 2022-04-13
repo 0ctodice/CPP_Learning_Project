@@ -27,6 +27,7 @@ void TowerSimulation::create_random_aircraft() const
 
 void TowerSimulation::print_existing_aircraft(int i)
 {
+    assert(i >= 0 && i < 8);
     auto airline = aircraft_factory->airlines[i];
     std::cout << "There is "
               << std::count_if(aircraft_manager->aircrafts.begin(), aircraft_manager->aircrafts.end(),
@@ -49,14 +50,10 @@ void TowerSimulation::create_keystrokes()
     GL::keystrokes.emplace(
         'm', [this]()
         { std::cout << "total landing crashes : " << aircraft_manager->landing_crash_counter << std::endl; });
-    GL::keystrokes.emplace('0', [this]() { print_existing_aircraft(0); });
-    GL::keystrokes.emplace('1', [this]() { print_existing_aircraft(1); });
-    GL::keystrokes.emplace('2', [this]() { print_existing_aircraft(2); });
-    GL::keystrokes.emplace('3', [this]() { print_existing_aircraft(3); });
-    GL::keystrokes.emplace('4', [this]() { print_existing_aircraft(4); });
-    GL::keystrokes.emplace('5', [this]() { print_existing_aircraft(5); });
-    GL::keystrokes.emplace('6', [this]() { print_existing_aircraft(6); });
-    GL::keystrokes.emplace('7', [this]() { print_existing_aircraft(7); });
+    for (int i = 0; i < 8; i++)
+    {
+        GL::keystrokes.emplace(i + '0', [this, i]() { print_existing_aircraft(i); });
+    }
 }
 
 void TowerSimulation::display_help() const
@@ -74,6 +71,7 @@ void TowerSimulation::display_help() const
 
 void TowerSimulation::init_airport()
 {
+    assert(!airport);
     airport = std::make_unique<Airport>(one_lane_airport, Point3D { 0, 0, 0 },
                                         new img::Image { one_lane_airport_sprite_path.get_full_path() },
                                         aircraft_manager.get());

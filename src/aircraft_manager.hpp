@@ -24,7 +24,17 @@ public:
     {
         std::sort(aircrafts.begin(), aircrafts.end(),
                   [](const std::unique_ptr<Aircraft>& a, const std::unique_ptr<Aircraft>& b)
-                  { return a->has_terminal() > b->has_terminal() && a->fuel < b->fuel; });
+                  {
+                      if (!a->has_terminal() && b->has_terminal())
+                      {
+                          return false;
+                      }
+                      if (a->has_terminal() && !b->has_terminal())
+                      {
+                          return true;
+                      }
+                      return a->fuel < b->fuel;
+                  });
 
         aircrafts.erase(std::remove_if(aircrafts.begin(), aircrafts.end(),
                                        [this](const std::unique_ptr<Aircraft>& aircraft)

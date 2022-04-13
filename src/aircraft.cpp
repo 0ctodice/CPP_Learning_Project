@@ -7,6 +7,7 @@
 
 void Aircraft::turn_to_waypoint()
 {
+    assert(!waypoints.empty());
     if (!waypoints.empty())
     {
         Point3D target = waypoints[0];
@@ -136,7 +137,7 @@ bool Aircraft::move()
             if (--fuel <= 0)
             {
                 using namespace std::string_literals;
-                throw AircraftCrash { flight_number + " has crashed for of lack of fuel"s };
+                throw AircraftCrash { flight_number + " has crashed due of lack of fuel"s };
             }
 
             if (!has_terminal())
@@ -145,8 +146,7 @@ bool Aircraft::move()
                 auto ways = control.reserve_terminal(*this);
                 if (!ways.empty())
                 {
-                    waypoints.clear();
-                    std::move(ways.begin(), ways.end(), std::back_inserter(waypoints));
+                    waypoints = std::move(ways);
                 }
             }
 

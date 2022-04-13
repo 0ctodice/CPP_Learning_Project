@@ -27,6 +27,7 @@ void TowerSimulation::create_random_aircraft() const
 
 void TowerSimulation::print_existing_aircraft(int i)
 {
+    assert(i >= 0 && i < 8);
     auto airline = aircraft_factory->airlines[i];
     std::cout << "There is "
               << std::count_if(aircraft_manager->aircrafts.begin(), aircraft_manager->aircrafts.end(),
@@ -70,6 +71,7 @@ void TowerSimulation::display_help() const
 
 void TowerSimulation::init_airport()
 {
+    assert(!airport);
     airport = std::make_unique<Airport>(one_lane_airport, Point3D { 0, 0, 0 },
                                         new img::Image { one_lane_airport_sprite_path.get_full_path() },
                                         aircraft_manager.get());

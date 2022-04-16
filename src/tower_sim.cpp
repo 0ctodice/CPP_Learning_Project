@@ -9,13 +9,12 @@
 using namespace std::string_literals;
 
 TowerSimulation::TowerSimulation(int argc, char** argv) :
-    help { (argc > 1) && (std::string { argv[1] } == "--help"s || std::string { argv[1] } == "-h"s) }
+    help { (argc > 1) && (std::string { argv[1] } == "--help"s || std::string { argv[1] } == "-h"s) },
+    context { std::make_unique<ContextInitializer>(argc, argv) },
+    aircraft_manager { std::make_unique<AircraftManager>() },
+    aircraft_factory { std::make_unique<AircraftFactory>() }
 {
-    context          = std::make_unique<ContextInitializer>(argc, argv);
-    aircraft_manager = std::make_unique<AircraftManager>();
-    aircraft_factory = std::make_unique<AircraftFactory>();
     GL::move_queue.emplace(aircraft_manager.get());
-
     create_keystrokes();
 }
 

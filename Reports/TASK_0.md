@@ -3,7 +3,7 @@
 ## A- Exécution
 
 > Allez dans le fichier `tower_sim.cpp` et recherchez la fonction responsable de gérer les inputs du programme.
-Sur quelle touche faut-il appuyer pour ajouter un avion ?
+>Sur quelle touche faut-il appuyer pour ajouter un avion ?
 
 Il faut appuyer sur la touche c pour ajouter un avion.
 
@@ -22,14 +22,14 @@ Dans l'ordre :
 - l'avion arrive dans la scène.
 - il se pose sur la piste d'atterrissage.
 - il prends des passagers.
-- puis re-décolle et tourne en rond autour de l'aéroport. 
+- puis re-décolle et tourne en rond autour de l'aéroport avant de recommencé.
 
 >Quelles informations s'affichent dans la console ?
 
 Dans la console on affiche les actions de chaque avion. (il décolle, récupère des passagers ...)
 
 >Ajoutez maintenant quatre avions d'un coup dans la simulation.
-Que fait chacun des avions ?
+>Que fait chacun des avions ?
 
 Ils vont chacun leur tour attendre qu'ils puissent récupérer des passagers (seulement s'il y a de la place) puis ils vont partir vers leur déstination pour revenir et répéter le cycle.
 
@@ -41,19 +41,19 @@ Pour chacune d'entre elle, expliquez ce qu'elle représente et son rôle dans le
 | classe        | représentation |
 | ------------- | -------------- |
 | aircraft_type | représente les différents types d'avions, permets de stocker les informations propre à un avion |
-|aircraft       | représente les à proprement parler un avion ainsi que ses actions | 
+| aircraft      | représente les à proprement parler un avion ainsi que ses actions et stock les informations de l'instance | 
 | airport_type  | représente les informations d'un aéroports |
-| airport       | représente à proprement parler un aéroport |
-| geometry      | représente les actions possible sur les géométrie du projet |
+| airport       | représente à proprement parler un aéroport et contient les terminaux |
+| geometry      | représente les actions possible sur les Point2D et Point3D du projet donc gère le calcul des poisitons d'affichage/déplacement |
 | main          | permet de lancer la simulation |
 | runaway       | représente le point dans l'espace qui indique aux avions qu'ils se sont éloignés de l'aéroport |
 | terminal      | représente les terminaux de l'aéroport, permets aux avions de récupérer des passagers |
 | tower_sim     | gère toute la simulations ainsi que les inputs de l'utilisateur |
-| tower         | représente les tours de controle |
+| tower         | représente les tours de controle et fait le liens entre l'aéroport et les avions et dirige les avions |
 | waypoint      | représente un point sur le chemin d'un avion |
 
 >Pour les classes `Tower`, `Aircaft`, `Airport` et `Terminal`, listez leurs fonctions-membre publiques et expliquez précisément à quoi elles servent.
-Réalisez ensuite un schéma présentant comment ces différentes classes intéragissent ensemble.
+>Réalisez ensuite un schéma présentant comment ces différentes classes intéragissent ensemble.
 
 ### Tower :
 
@@ -110,7 +110,7 @@ Il y a :
     - get_instructions()
 
 >Quel conteneur de la librairie standard a été choisi pour représenter le chemin ?
-Expliquez les intérêts de ce choix.
+>Expliquez les intérêts de ce choix.
 
 Le conteneur choisi est std::deque, comme l'avion va se déplacer entre plusieurs points différents, utiliser une deque plutôt qu'un vector est plus intéréssant car la deque permets un ajout et une suppression plus efficace, donc on va pouvoir ajouter et retirer des points sur la trajectoire de l'avion plus facilement.
 
@@ -142,7 +142,7 @@ ici il s'agit de la version final, on fait un min pour l'augmentation du framera
 
 > Essayez maintenant de mettre en pause le programme en manipulant ce framerate. Que se passe-t-il ?
 
-Le programme crash.
+Le programme crash car division par 0.
 
 > Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pause, et qui ne passe pas par le framerate.
 
@@ -239,10 +239,6 @@ static inline std::vector<const Displayable*> display_queue;
 
 De plus pour éviter les soucis, dans la fonction display de la classe opengl_interface, il faut faire des appelle static et non global à la liste display_queue, pour ce faire il faut juste préciser Displayable devant display_queue.
 
-> Pourquoi n'est-il pas spécialement pertinent d'en faire de même pour `DynamicObject` ?
-
-Ce n'est pas spécialement pertinant car certains objets ne vont pas forcément avoir le même comportement à leur création et leur destruction.
-
 > Modifiez le code afin d'utiliser un conteneur STL plus adapté. Normalement, à la fin, la fonction find_craft_and_terminal(const Aicraft&) ne devrait plus être nécessaire.
 
 on utilisera la map suivante :
@@ -255,8 +251,12 @@ std::map<const Aircraft*, size_t>;
 
 > Comment a-t-on fait pour que seule la classe Tower puisse réserver un terminal de l'aéroport ?
 
-on passe par la manipulation du champs `reserved_terminal` qui est privé et membres de la classe Tower.
+on passe par la manipulation du champs `reserved_terminal` qui est privé et membres de la classe Tower. De plus, la classe Tower est une classe ami à Terminal.
 
-> En regardant le contenu de la fonction void Aircraft::turn(Point3D direction), pourquoi selon-vous ne sommes-nous pas passer par une réference ? Pensez-vous qu'il soit possible d'éviter la copie du Point3D passé en paramètre ?
+> En regardant le contenu de la fonction void Aircraft::turn(Point3D direction), pourquoi selon-vous ne sommes-nous pas passer par une réference ?
 
 Il n'est possible de passer par une const ref car on utilise la fonction cap_length du Point3D qui va venir le modifier. 
+
+> Pourquoi n'est-il pas possible d'éviter la copie du Point3D passé en paramètre ?
+
+On est obligé d'avoir le même Point3D au passage de la fonction car on ne veut pas le modifier si on le passe plusieurs fois dans la fonction.

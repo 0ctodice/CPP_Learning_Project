@@ -29,9 +29,9 @@ class TowerSimulation
 private:
     bool help = false;
     std::unique_ptr<Airport> airport;
+    std::unique_ptr<ContextInitializer> context;
     std::unique_ptr<AircraftManager> aircraft_manager;
     std::unique_ptr<AircraftFactory> aircraft_factory;
-    std::unique_ptr<ContextInitializer> context;
 
     TowerSimulation(const TowerSimulation&) = delete;
     TowerSimulation& operator=(const TowerSimulation&) = delete;

@@ -26,7 +26,8 @@ Comme chaque avion créé sont placés dans la file `GL::display_queue` et que c
 | avantages | inconvénient |
 | --------- | ------------ |
 | respect du *Single Responsibility Principle* | implémentation plus compliqué |
-| meilleur controle | |
+| meilleur controle | Plus lent à la compilation |
+| plus optimisé | |
 
 ### donner ce rôle à une classe existante
 
@@ -52,7 +53,9 @@ En passant par des parcours par iterator, on peut supprimer l'avion en question 
 Pour le pointer sur `Aircraft` dans `Terminal`, on le fait tout simplement pointer vers un `nullptr`.
 Pour la `GL::display_queue`, on retire l'objet de la liste à sa destruction, et pour la `GL::move_queue`, on utilise le parcours par iterator expliqué au dessus.
 
-> 4. Pourquoi n'est-il pas très judicieux d'essayer d'appliquer la même chose pour votre `AircraftManager` ?
+## Objectif 1 - Usine à avions
+### A - Création d'une factory
 
-Comme nous allons probablement utiliser un container afin de stocker tous nos avions, si l'on faisait référence une case de notre container vers un nullptr, lors du parcours de ce derniers nous aurions de gros problème de nullpointer.
+> A quelle ligne faut-il définir context_initializer dans TowerSimulation pour s'assurer que le constructeur de context_initializer est appelé avant celui de factory ?
 
+Il faut le définir avant la définition de factory, comme ça dans la list initializer on sera obligé de l'initialisé avant d'initialisé la factory.  

@@ -7,6 +7,7 @@
 
 void Aircraft::turn_to_waypoint()
 {
+    assert(!waypoints.empty());
     if (!waypoints.empty())
     {
         Point3D target = waypoints[0];
@@ -76,10 +77,9 @@ void Aircraft::operate_landing_gear()
         }
     }
 }
-
-void Aircraft::add_waypoint(const Waypoint& wp, const bool front)
+template <typename T, bool Front> void Aircraft::add_waypoint(const T& wp)
 {
-    if (front)
+    if constexpr (Front)
     {
         waypoints.push_front(wp);
     }
@@ -97,7 +97,11 @@ bool Aircraft::move()
         {
             return false;
         }
-        waypoints = control.get_instructions(*this);
+        // waypoints = control.get_instructions(*this);
+        for (const auto& wp : control.get_instructions(*this))
+        {
+            add_waypoint<Waypoint, false>(wp);
+        }
     }
 
     if (!is_at_terminal)
@@ -132,8 +136,8 @@ bool Aircraft::move()
         {
             if (--fuel <= 0)
             {
-                std::cout << flight_number << " has crashed" << std::endl;
-                return false;
+                using namespace std::string_literals;
+                throw AircraftCrash { flight_number + " has crashed due of lack of fuel"s };
             }
 
             if (!has_terminal())
@@ -142,8 +146,7 @@ bool Aircraft::move()
                 auto ways = control.reserve_terminal(*this);
                 if (!ways.empty())
                 {
-                    waypoints.clear();
-                    std::move(ways.begin(), ways.end(), std::back_inserter(waypoints));
+                    waypoints = std::move(ways);
                 }
             }
 
@@ -164,6 +167,7 @@ bool Aircraft::move()
 
 void Aircraft::refill(int& fuel_stock)
 {
+    assert(fuel_stock >= 0);
     if (is_at_terminal && fuel_stock > 0)
     {
         int need = 3000 - fuel > fuel_stock ? fuel_stock : 3000 - fuel;

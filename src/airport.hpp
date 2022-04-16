@@ -78,6 +78,7 @@ public:
 
     bool move() override
     {
+        assert(next_refill_time >= 0);
         if (next_refill_time == 0)
         {
             int needed_fuel = aircraft_manager->get_required_fuel();
